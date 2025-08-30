@@ -5,7 +5,7 @@
 - Setup the Tools
   (
   getMeeting and setMeetings
-  )
+  ) - ✅
 
 - Build the graph
 
