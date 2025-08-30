@@ -1,7 +1,7 @@
 # Project Plan
 
 - Project setup - ✅
-- Setup LLM
+- Setup LLM - ✅
 - Setup the Tools
   (
   getMeeting and setMeetings
