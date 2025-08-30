@@ -7,7 +7,7 @@
   getMeeting and setMeetings
   ) - ✅
 
-- Build the graph
+- Build the graph - ✅
 
 - Implement the tools - connect to Google calender
 
