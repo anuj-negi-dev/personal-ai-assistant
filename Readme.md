@@ -9,7 +9,10 @@
 
 - Build the graph - ✅
 
-- Implement the tools - connect to Google calender
+- Implement the tools - connect to Google calender - ✅
+
+  - Get Meetings - ✅
+  - Set Meetings -
 
 - Terminal UI
 

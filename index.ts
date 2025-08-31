@@ -43,7 +43,7 @@ async function main() {
     messages: [
       {
         role: "user",
-        content: "can you schedule a meeting with Alice at 10 PM today",
+        content: "Do i have any meeting today with Manthan?",
       },
     ],
   });

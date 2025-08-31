@@ -26,7 +26,6 @@ app.get("/callback", async (req, res) => {
   const code = req.query.code as string;
   const { tokens } = await oauth2Client.getToken(code);
   console.log("Tokens", tokens);
-  oauth2Client.setCredentials(tokens);
   res.send("Connected ✅ You can close this tab now.");
 });
 
