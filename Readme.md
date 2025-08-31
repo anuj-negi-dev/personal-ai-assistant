@@ -12,8 +12,8 @@
 - Implement the tools - connect to Google calender - ✅
 
   - Get Meetings - ✅
-  - Set Meetings -
+  - Set Meetings - ✅
 
-- Terminal UI
+- Terminal UI - ✅
 
 - Add the memory

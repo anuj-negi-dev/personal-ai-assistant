@@ -1,3 +1,4 @@
+import readLine from "node:readline/promises";
 import { ChatGroq } from "@langchain/groq";
 import { createEventTool, getEventsTool } from "./tools";
 import { END, MessagesAnnotation, StateGraph } from "@langchain/langgraph";
@@ -39,18 +40,29 @@ const workflow = new StateGraph(MessagesAnnotation)
 const app = workflow.compile();
 
 async function main() {
-  const finalState = await app.invoke({
-    messages: [
-      {
-        role: "user",
-        content: "get all my meetings of today.",
-      },
-    ],
+  const rl = readLine.createInterface({
+    input: process.stdin,
+    output: process.stdout,
   });
-  console.log(
-    "AI: ",
-    finalState.messages[finalState.messages.length - 1]?.content
-  );
+
+  while (true) {
+    const question = await rl.question("You: ");
+    if (question === "exit") break;
+    const finalState = await app.invoke({
+      messages: [
+        {
+          role: "user",
+          content: question,
+        },
+      ],
+    });
+    console.log(
+      "AI: ",
+      finalState.messages[finalState.messages.length - 1]?.content
+    );
+  }
+
+  rl.close();
 }
 
 main();
