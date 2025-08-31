@@ -2,6 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { google } from "googleapis";
 import tokens from "./tokens.json";
+import crypto from "node:crypto";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -13,11 +14,19 @@ oauth2Client.setCredentials(tokens);
 
 const calendar = google.calendar({ version: "v3", auth: oauth2Client });
 
-type Params = {
-  q: string;
-  timeMin: string;
-  timeMax: string;
-};
+const getEventSchema = z.object({
+  q: z.string()
+    .describe(`The query used to get events from google calendar. It can be on of the following values
+          summary of the meeting, description of the meeting, location, attendees display name, attendees email, organizer's name, organizer's email`),
+  timeMin: z
+    .string()
+    .describe("The from date time in UTC format to get the events"),
+  timeMax: z
+    .string()
+    .describe("The to date time in UTC format to get the events"),
+});
+
+type Params = z.infer<typeof getEventSchema>;
 
 export const getEventsTool = tool(
   async (params) => {
@@ -54,31 +63,73 @@ export const getEventsTool = tool(
   {
     name: "get-event",
     description: "Call to get all the calendar events.",
-    schema: z.object({
-      q: z.string()
-        .describe(`The query used to get events from google calendar. It can be on of the following values
-          summary of the meeting, description of the meeting, location, attendees display name, attendees email, organizer's name, organizer's email`),
-      timeMin: z
-        .string()
-        .describe("The from date time in UTC format to get the events"),
-      timeMax: z
-        .string()
-        .describe("The to date time in UTC format to get the events"),
-    }),
+    schema: getEventSchema,
   }
 );
 
+const createEventSchema = z.object({
+  summary: z.string().describe("The title of the meeting"),
+  description: z.string().describe("The description of the meeting"),
+  start: z.object({
+    dateTime: z.string().describe("The date and time of the meeting in UTC"),
+    timeZone: z.string().describe("The timezone of the event in UTC"),
+  }),
+  end: z.object({
+    dateTime: z
+      .string()
+      .describe(
+        "The date and time of the meeting in UTC on which the meeting is end"
+      ),
+    timeZone: z
+      .string()
+      .describe("The timezone of the event in UTC on which the meeting is end"),
+  }),
+  attendees: z.array(
+    z.object({
+      email: z.string().describe("The email of the attendee"),
+      displayName: z.string().describe("The name of the attendee"),
+    })
+  ),
+});
+
+type EventData = z.infer<typeof createEventSchema>;
+
 export const createEventTool = tool(
-  () => {
+  async (eventData) => {
+    const { summary, start, end, attendees, description } =
+      eventData as EventData;
+    console.log(eventData);
+    try {
+      const res = await calendar.events.insert({
+        calendarId: "primary",
+        sendUpdates: "all",
+        conferenceDataVersion: 1,
+        requestBody: {
+          summary,
+          description,
+          start,
+          end,
+          attendees,
+          conferenceData: {
+            createRequest: {
+              requestId: crypto.randomUUID(),
+              conferenceSolutionKey: {
+                type: "hangoutsMeet",
+              },
+            },
+          },
+        },
+      });
+      console.log("Response", res);
+    } catch (error) {
+      return "Error while create the meeting";
+    }
+
     return "The meeting has been created";
   },
   {
     name: "create-event",
     description: "Call to create the calendar events.",
-    schema: z.object({
-      query: z
-        .string()
-        .describe("The query used to create events in google calendar."),
-    }),
+    schema: createEventSchema,
   }
 );
