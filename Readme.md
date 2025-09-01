@@ -19,3 +19,13 @@
 - Add the memory - ✅
 
 - Fix TimeZone - ✅
+
+- Move the secrets to .env - ✅
+
+- Implement web search tool
+
+- Implement Update meeting tool
+
+- Implement Delete meeting tool
+
+- Add a contact tool
