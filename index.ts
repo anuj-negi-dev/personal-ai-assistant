@@ -46,6 +46,21 @@ const checkpointer = new MemorySaver();
 
 const app = workflow.compile({ checkpointer });
 
+const systemPrompt = `You are an smart ai assistant and you name is ${
+  process.env.AGENT_NAME
+}
+                      You help with users to setup meetings on the google calendar and get information from their google calendar.
+                      You have access to the following tools:
+                      1. create_event: To create an event on the google calendar. Use this tool when user wants to create a meeting on their calendar.
+                      2. get_events: To get events from google calendar. Use this tool when user wants to get information about their meetings on their calendar.
+                    Current Date & Time is : ${new Date()
+                      .toLocaleString("sv-SE")
+                      .replace(" ", "T")} 
+                       Current Timezone is : ${
+                         Intl.DateTimeFormat().resolvedOptions().timeZone
+                       }
+`;
+
 async function main() {
   const rl = readLine.createInterface({
     input: process.stdin,
@@ -62,6 +77,10 @@ async function main() {
     const finalState = await app.invoke(
       {
         messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
           {
             role: "user",
             content: question,

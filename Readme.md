@@ -17,3 +17,5 @@
 - Terminal UI - ✅
 
 - Add the memory - ✅
+
+- Fix TimeZone - ✅

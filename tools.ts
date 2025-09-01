@@ -18,12 +18,8 @@ const getEventSchema = z.object({
   q: z.string()
     .describe(`The query used to get events from google calendar. It can be on of the following values
           summary of the meeting, description of the meeting, location, attendees display name, attendees email, organizer's name, organizer's email`),
-  timeMin: z
-    .string()
-    .describe("The from date time in UTC format to get the events"),
-  timeMax: z
-    .string()
-    .describe("The to date time in UTC format to get the events"),
+  timeMin: z.string().describe("The from date time to get the events"),
+  timeMax: z.string().describe("The to date time to get the events"),
 });
 
 type Params = z.infer<typeof getEventSchema>;
@@ -71,18 +67,16 @@ const createEventSchema = z.object({
   summary: z.string().describe("The title of the meeting"),
   description: z.string().describe("The description of the meeting"),
   start: z.object({
-    dateTime: z.string().describe("The date and time of the meeting in UTC"),
-    timeZone: z.string().describe("The timezone of the event in UTC"),
+    dateTime: z.string().describe("The date and time of the meeting"),
+    timeZone: z.string().describe("The timezone of the event"),
   }),
   end: z.object({
     dateTime: z
       .string()
-      .describe(
-        "The date and time of the meeting in UTC on which the meeting is end"
-      ),
+      .describe("The date and time of the meeting on which the meeting is end"),
     timeZone: z
       .string()
-      .describe("The timezone of the event in UTC on which the meeting is end"),
+      .describe("The timezone of the event on which the meeting is end"),
   }),
   attendees: z.array(
     z.object({
