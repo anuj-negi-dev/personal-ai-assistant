@@ -16,4 +16,4 @@
 
 - Terminal UI - ✅
 
-- Add the memory
+- Add the memory - ✅

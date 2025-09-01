@@ -120,12 +120,12 @@ export const createEventTool = tool(
           },
         },
       });
-      console.log("Response", res);
+      if (res.ok && res.statusText === "OK") {
+        return "The meeting has been created";
+      }
     } catch (error) {
       return "Error while create the meeting";
     }
-
-    return "The meeting has been created";
   },
   {
     name: "create-event",

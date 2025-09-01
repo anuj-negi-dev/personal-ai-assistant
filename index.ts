@@ -1,7 +1,12 @@
 import readLine from "node:readline/promises";
 import { ChatGroq } from "@langchain/groq";
 import { createEventTool, getEventsTool } from "./tools";
-import { END, MessagesAnnotation, StateGraph } from "@langchain/langgraph";
+import {
+  END,
+  MemorySaver,
+  MessagesAnnotation,
+  StateGraph,
+} from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import type { AIMessage } from "@langchain/core/messages";
 
@@ -37,25 +42,34 @@ const workflow = new StateGraph(MessagesAnnotation)
     tools: "tools",
   });
 
-const app = workflow.compile();
+const checkpointer = new MemorySaver();
+
+const app = workflow.compile({ checkpointer });
 
 async function main() {
   const rl = readLine.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-
+  const config = {
+    configurable: {
+      thread_id: "1",
+    },
+  };
   while (true) {
     const question = await rl.question("You: ");
     if (question === "exit") break;
-    const finalState = await app.invoke({
-      messages: [
-        {
-          role: "user",
-          content: question,
-        },
-      ],
-    });
+    const finalState = await app.invoke(
+      {
+        messages: [
+          {
+            role: "user",
+            content: question,
+          },
+        ],
+      },
+      config
+    );
     console.log(
       "AI: ",
       finalState.messages[finalState.messages.length - 1]?.content
