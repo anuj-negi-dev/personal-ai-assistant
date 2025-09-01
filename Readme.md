@@ -28,6 +28,6 @@
 
 - Implement Update meeting tool
 
-- Implement Delete meeting tool
+- Implement Delete meeting tool - ✅
 
 - Add a contact tool

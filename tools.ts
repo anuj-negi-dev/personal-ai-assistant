@@ -132,6 +132,33 @@ export const createEventTool = tool(
   }
 );
 
+const deleteEventSchema = z.object({
+  eventId: z.string().describe("The ID of the event to delete"),
+});
+
+type deleteEventData = z.infer<typeof deleteEventSchema>;
+
+export const deleteEventTool = tool(
+  async (deleteEventData) => {
+    const { eventId } = deleteEventData as deleteEventData;
+    try {
+      await calendar.events.delete({
+        calendarId: "primary",
+        eventId,
+        sendUpdates: "all",
+      });
+      return "The meeting has been deleted";
+    } catch (error) {
+      return "Error while deleting the meeting";
+    }
+  },
+  {
+    name: "delete-event",
+    description: "Call to delete the calendar events.",
+    schema: deleteEventSchema,
+  }
+);
+
 export const webSearch = new TavilySearch({
   maxResults: 3,
   topic: "general",

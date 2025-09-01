@@ -1,6 +1,11 @@
 import readLine from "node:readline/promises";
 import { ChatGroq } from "@langchain/groq";
-import { createEventTool, getEventsTool, webSearch } from "./tools";
+import {
+  createEventTool,
+  deleteEventTool,
+  getEventsTool,
+  webSearch,
+} from "./tools";
 import {
   END,
   MemorySaver,
@@ -10,7 +15,7 @@ import {
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import type { AIMessage } from "@langchain/core/messages";
 
-const tools = [createEventTool, getEventsTool, webSearch];
+const tools = [createEventTool, getEventsTool, deleteEventTool, webSearch];
 
 const model = new ChatGroq({
   model: "openai/gpt-oss-120b",
@@ -54,6 +59,7 @@ const systemPrompt = `You are an smart ai assistant and you name is ${
                       1. create_event: To create an event on the google calendar. Use this tool when user wants to create a meeting on their calendar.
                       2. get_events: To get events from google calendar. Use this tool when user wants to get information about their meetings on their calendar.
                       3. web_search: To search the web for information. Use this tool when user wants to get information about anything on the web.
+                      4. delete_event: To delete an event from google calendar. Use this tool when user wants to delete a meeting from their calendar.
                     Current Date & Time is : ${new Date()
                       .toLocaleString("sv-SE")
                       .replace(" ", "T")} 
