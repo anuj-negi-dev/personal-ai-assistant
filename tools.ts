@@ -1,9 +1,11 @@
 import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { google } from "googleapis";
-import tokens from "./tokens.json";
 import crypto from "node:crypto";
 import { TavilySearch } from "@langchain/tavily";
+import contactDB from "./contactDB.json";
+
+console.log("ContactDB", contactDB);
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -156,6 +158,27 @@ export const deleteEventTool = tool(
     name: "delete-event",
     description: "Call to delete the calendar events.",
     schema: deleteEventSchema,
+  }
+);
+
+const getEmailSchema = z.object({
+  displayName: z.string().describe("User name of the person whom email to get"),
+});
+
+type UserData = z.infer<typeof getEmailSchema>;
+
+export const getEmail = tool(
+  (userData) => {
+    const { displayName } = userData as UserData;
+    const attendeeInfo = contactDB.find(
+      (attendee) => attendee.displayName === displayName
+    );
+    return JSON.stringify(attendeeInfo);
+  },
+  {
+    name: "get-email",
+    description: "Call to get the email for a attendee",
+    schema: getEmailSchema,
   }
 );
 

@@ -30,4 +30,4 @@
 
 - Implement Delete meeting tool - ✅
 
-- Add a contact tool
+- Add a contact tool - ✅

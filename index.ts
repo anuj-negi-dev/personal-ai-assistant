@@ -5,6 +5,7 @@ import {
   deleteEventTool,
   getEventsTool,
   webSearch,
+  getEmail,
 } from "./tools";
 import {
   END,
@@ -15,7 +16,13 @@ import {
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import type { AIMessage } from "@langchain/core/messages";
 
-const tools = [createEventTool, getEventsTool, deleteEventTool, webSearch];
+const tools = [
+  createEventTool,
+  getEventsTool,
+  deleteEventTool,
+  webSearch,
+  getEmail,
+];
 
 const model = new ChatGroq({
   model: "openai/gpt-oss-120b",
@@ -60,6 +67,7 @@ const systemPrompt = `You are an smart ai assistant and you name is ${
                       2. get_events: To get events from google calendar. Use this tool when user wants to get information about their meetings on their calendar.
                       3. web_search: To search the web for information. Use this tool when user wants to get information about anything on the web.
                       4. delete_event: To delete an event from google calendar. Use this tool when user wants to delete a meeting from their calendar.
+                      5. get_email: To get the email of an attendee. Use this tool when user wants to get the email of a specific attendee use this tool when  the user does not provide it.
                     Current Date & Time is : ${new Date()
                       .toLocaleString("sv-SE")
                       .replace(" ", "T")} 
