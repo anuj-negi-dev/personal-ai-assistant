@@ -6,6 +6,7 @@ import {
   getEventsTool,
   webSearch,
   getEmail,
+  updateEventTool,
 } from "./tools";
 import {
   END,
@@ -20,6 +21,7 @@ const tools = [
   createEventTool,
   getEventsTool,
   deleteEventTool,
+  updateEventTool,
   webSearch,
   getEmail,
 ];
@@ -68,6 +70,7 @@ const systemPrompt = `You are an smart ai assistant and you name is ${
                       3. web_search: To search the web for information. Use this tool when user wants to get information about anything on the web.
                       4. delete_event: To delete an event from google calendar. Use this tool when user wants to delete a meeting from their calendar.
                       5. get_email: To get the email of an attendee. Use this tool when user wants to get the email of a specific attendee use this tool when  the user does not provide it.
+                      6. update_event: To update an event on the google calendar. Use this tool when user wants to update a meeting on their calendar.
                     Current Date & Time is : ${new Date()
                       .toLocaleString("sv-SE")
                       .replace(" ", "T")} 

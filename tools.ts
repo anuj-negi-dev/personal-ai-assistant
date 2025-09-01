@@ -5,8 +5,6 @@ import crypto from "node:crypto";
 import { TavilySearch } from "@langchain/tavily";
 import contactDB from "./contactDB.json";
 
-console.log("ContactDB", contactDB);
-
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -98,7 +96,6 @@ export const createEventTool = tool(
   async (eventData) => {
     const { summary, start, end, attendees, description } =
       eventData as EventData;
-    console.log(eventData);
     try {
       const res = await calendar.events.insert({
         calendarId: "primary",
@@ -158,6 +155,70 @@ export const deleteEventTool = tool(
     name: "delete-event",
     description: "Call to delete the calendar events.",
     schema: deleteEventSchema,
+  }
+);
+
+const updateEventSchema = z.object({
+  eventId: z.string().describe("The ID of the event to update"),
+  summary: z.string().describe("The title of the meeting"),
+  description: z.string().describe("The description of the meeting"),
+  start: z.object({
+    dateTime: z.string().describe("The date and time of the meeting"),
+    timeZone: z.string().describe("The timezone of the event"),
+  }),
+  end: z.object({
+    dateTime: z
+      .string()
+      .describe("The date and time of the meeting on which the meeting is end"),
+    timeZone: z
+      .string()
+      .describe("The timezone of the event on which the meeting is end"),
+  }),
+  attendees: z.array(
+    z.object({
+      email: z.string().describe("The email of the attendee"),
+      displayName: z.string().describe("The name of the attendee"),
+    })
+  ),
+});
+
+type UpdateMeetingData = z.infer<typeof updateEventSchema>;
+
+export const updateEventTool = tool(
+  async (updateMeetingData) => {
+    const { eventId, start, end, attendees, summary, description } =
+      updateMeetingData as UpdateMeetingData;
+    try {
+      await calendar.events.update({
+        calendarId: "primary",
+        eventId,
+        sendUpdates: "all",
+        conferenceDataVersion: 1,
+        requestBody: {
+          summary,
+          description,
+          start,
+          end,
+          attendees,
+          conferenceData: {
+            createRequest: {
+              requestId: crypto.randomUUID(),
+              conferenceSolutionKey: {
+                type: "hangoutsMeet",
+              },
+            },
+          },
+        },
+      });
+      return "The meeting has been updated";
+    } catch (error) {
+      return "Error while updating the meeting";
+    }
+  },
+  {
+    name: "update-event",
+    description: "Call to update the calendar events.",
+    schema: updateEventSchema,
   }
 );
 

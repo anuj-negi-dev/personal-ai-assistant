@@ -26,7 +26,7 @@
 
 - Implement web search tool - ✅
 
-- Implement Update meeting tool
+- Implement Update meeting tool - ✅
 
 - Implement Delete meeting tool - ✅
 
