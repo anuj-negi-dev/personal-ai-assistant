@@ -22,7 +22,9 @@
 
 - Move the secrets to .env - ✅
 
-- Implement web search tool
+- Improve the system prompt and add Persona - ✅
+
+- Implement web search tool - ✅
 
 - Implement Update meeting tool
 

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { google } from "googleapis";
 import tokens from "./tokens.json";
 import crypto from "node:crypto";
+import { TavilySearch } from "@langchain/tavily";
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -130,3 +131,8 @@ export const createEventTool = tool(
     schema: createEventSchema,
   }
 );
+
+export const webSearch = new TavilySearch({
+  maxResults: 3,
+  topic: "general",
+});
